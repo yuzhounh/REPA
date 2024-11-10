@@ -77,8 +77,7 @@ classdef repa < matlab.apps.AppBase
             app.RestingStatefMRIPreprocessingToolboxLabel = uilabel(app.UIFigure);
             app.RestingStatefMRIPreprocessingToolboxLabel.FontSize = 15;
             app.RestingStatefMRIPreprocessingToolboxLabel.FontWeight = 'bold';
-            app.RestingStatefMRIPreprocessingToolboxLabel.HorizontalAlignment = 'center';
-            app.RestingStatefMRIPreprocessingToolboxLabel.Position = [20 441 600 22];
+            app.RestingStatefMRIPreprocessingToolboxLabel.Position = [141 441 359 22];
             app.RestingStatefMRIPreprocessingToolboxLabel.Text = 'Resting-State fMRI Preprocessing and Analysis';
 
             % Create WorkingdirectoryEditFieldLabel
@@ -90,7 +89,7 @@ classdef repa < matlab.apps.AppBase
             % Create WorkingdirectoryEditField
             app.WorkingdirectoryEditField = uieditfield(app.UIFigure, 'text');
             app.WorkingdirectoryEditField.Position = [164 384 348 22];
-            app.WorkingdirectoryEditField.Value = 'D:\Data_Preprocess';
+            app.WorkingdirectoryEditField.Value = 'D:\Data\fMRI_Preprocess';
 
             % Create BrowseButton
             app.BrowseButton = uibutton(app.UIFigure, 'push');
@@ -158,9 +157,9 @@ classdef repa < matlab.apps.AppBase
             % Create RunButton
             app.RunButton = uibutton(app.UIFigure, 'push');
             app.RunButton.ButtonPushedFcn = createCallbackFcn(app, @RunButtonPushed, true);
-            app.RunButton.Position = [284 53 100 22]; 
-            app.RunButton.Text = 'RUN'; 
-            app.RunButton.FontWeight = 'bold'; % Additional step to ensure bold text
+            app.RunButton.FontWeight = 'bold';
+            app.RunButton.Position = [284 53 100 22];
+            app.RunButton.Text = 'RUN';
         end
     end
 
