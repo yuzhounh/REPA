@@ -1,4 +1,4 @@
-function repa_installation()
+function repa_installation(working_dir)
 % Install related softwares and check dependencies
 % 2024-9-11 20:12:28
 
@@ -16,7 +16,7 @@ fprintf('Installation is completed.\n\n');
 %% Software versions
 % Start diary
 fprintf('%s\n\n',repmat('-',1,72));
-diary('repa_utilities/repa_dependencies.txt');
+diary(fullfile(working_dir, 'repa_dependencies.txt'));
 
 % time stamp
 currentTime = char(datetime('now', 'Format', 'yyyy-M-dd HH:mm:ss'));

@@ -43,7 +43,10 @@ end
 try
     spm_url = 'https://www.fil.ion.ucl.ac.uk/spm/download/restricted/eldorado/spm12.zip';
     spm_zip = fullfile(pwd, 'spm12.zip');
+    fprintf('\nStarting download from:\n%s\n', spm_url);
     websave(spm_zip, spm_url);
+    fprintf('Download completed.\n\n');
+    fprintf('Starting extraction and installation of SPM.\n');
     unzip(spm_zip);
     SPM_dir = dir('spm*');
     SPM_dir = SPM_dir([SPM_dir.isdir]);
@@ -59,7 +62,10 @@ end
 try
     github_url = 'https://codeload.github.com/spm/spm12/zip/refs/heads/main';
     spm_zip = fullfile(pwd, 'spm12.zip');
+    fprintf('\nStarting download from:\n%s\n', github_url);
     websave(spm_zip, github_url);
+    fprintf('Download completed.\n\n');
+    fprintf('Starting extraction and installation of SPM.\n');
     unzip(spm_zip);
     SPM_dir = dir('spm*');
     SPM_dir = SPM_dir([SPM_dir.isdir]);

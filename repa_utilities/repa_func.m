@@ -10,7 +10,7 @@ filter_band = para.filter_band;
 
 %% prepare
 % customized scripts
-working_path = 'repa_utilities/';
+working_path = fullfile(fileparts(which('repa.m')), 'repa_utilities');
 
 % welcome
 repa_welcome;
@@ -19,7 +19,7 @@ repa_welcome;
 starting_dir = repa_check_directories(working_dir);
 
 % install related softwares
-repa_installation;
+repa_installation(working_dir);
 
 % remove path: DPABI_V8.2_240510\DPARSF\Subfunctions
 repa_remove_path;

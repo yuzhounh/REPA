@@ -47,7 +47,7 @@ try
     dpabi_zip = fullfile(pwd, 'DPABI.zip');
     fprintf('\nStarting download from:\n%s\n', dpabi_url);
     websave(dpabi_zip, dpabi_url);
-    fprintf('Completed.\n\n');
+    fprintf('Download completed.\n\n');
     fprintf('Starting extraction and installation of DPABI.\n');
     unzip(dpabi_zip);
     dpabi_dir = dir('DPABI*');
@@ -67,7 +67,7 @@ try
     dpabi_zip = fullfile(pwd, 'DPABI.zip');
     fprintf('\nStarting download from:\n%s\n', github_url);
     websave(dpabi_zip, github_url);
-    fprintf('Completed.\n\n');
+    fprintf('Download completed.\n\n');
     fprintf('Starting extraction and installation of DPABI.\n');
     unzip(dpabi_zip);
     dpabi_dir = dir('DPABI*');
