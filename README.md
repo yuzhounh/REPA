@@ -16,7 +16,7 @@ REPA (Resting-state fMRI Preprocessing and Analysis) is a toolbox developed base
 2. Add REPA folder to MATLAB path
 3. Run `repa.m` to start the GUI
 
-![REPA Interface](repa_utilities/repa_gui.png)
+<img src="repa_utilities/repa_gui.png" width="80%" style="display: block; margin: 0 auto;">
 
 ## Data Organization
 
@@ -102,12 +102,12 @@ The data is already organized in the required directory structure and can be use
 
 1. Organize your data according to the directory structure shown above
 2. Open the REPA toolbox and set the following parameters in the interface:
-   - Working directory: Set to the full path of your data root directory (RootDir)
-   - Time points to remove: Set the number of initial time points to remove (default is 10)
-   - Voxel size (mm): Set the voxel dimensions in [x, y, z] format (default is [3, 3, 3])
-   - FWHM (mm): Set the spatial smoothing full-width at half maximum in [x, y, z] format (default is [6, 6, 6])
-   - Filter band (Hz): Set the temporal filtering frequency range in [low, high] format (default is [0.01, 0.1])
-3. Click the "RUN" button to start processing
+   - `Working directory`: Set to the full path of your data root directory (RootDir)
+   - `Time points to remove`: Set the number of initial time points to remove (default is 10)
+   - `Voxel size (mm)`: Set the voxel dimensions in [x, y, z] format (default is [3, 3, 3])
+   - `FWHM (mm)`: Set the spatial smoothing full-width at half maximum in [x, y, z] format (default is [6, 6, 6])
+   - `Filter band (Hz)`: Set the temporal filtering frequency range in [low, high] format (default is [0.01, 0.1])
+3. Click the `RUN` button to start processing
 
 ## Processing Pipeline
 
@@ -140,3 +140,31 @@ The data is already organized in the required directory structure and can be use
 14. **VMHC**: Data is normalized to symmetric template for VMHC (Voxel-Mirrored Homotopic Connectivity) analysis.
 
 15. **Smoothing**: Spatial smoothing is applied to all derivative maps.
+
+## Key Features
+
+1. **Flexible Data Input**: 
+   - Supports both DICOM and NiFTI format data as input
+   - Complete resting-state fMRI preprocessing pipeline with default settings
+   - Comprehensive data analysis capabilities
+
+2. **Automated Slice Timing Parameters**:
+   - Automatically extracts slice timing information from JSON metadata
+   - Calculates slice number, slice order, and reference slice
+   - Less manual parameter input needed
+
+3. **Data Documentation**:
+   - Saves key fMRI acquisition parameters and metadata
+   - Stores preprocessing configuration files for each subject
+   - Maintains complete processing history
+
+4. **Robust Processing**:
+   - Serial processing to avoid errors and memory issues
+   - Error logging for failed subjects with detailed diagnostics
+   - Easy error tracking and debugging
+
+5. **Enhanced User Experience**:
+   - Clean and organized console output
+   - Real-time progress tracking
+   - Estimated time remaining for each processing step
+   - Clear status updates throughout pipeline execution
