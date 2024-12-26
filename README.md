@@ -1,22 +1,8 @@
 # REPA
-Resting-State fMRI Preprocessing and Analysis
+
+[![License](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html)
 
 REPA (Resting-state fMRI Preprocessing and Analysis) is a toolbox developed based on SPM and DPABI for processing resting-state fMRI data.
-
-## Features
-
-- User-friendly graphical interface
-- Batch processing of multiple subjects
-- Standard preprocessing pipeline including:
-  - DICOM to NIfTI conversion (Optional)
-  - Time points removal
-  - Slice timing correction
-  - Realignment
-  - Normalization
-  - Smoothing
-  - Filtering
-- Flexible parameter settings
-- Support for DICOM and NIfTI formats
 
 ## Requirements
 
@@ -38,6 +24,7 @@ REPA expects input data to be organized in a specific directory structure as sho
 
 For DICOM format data, please organize your data in the following structure:
 
+```
 RootDir/
 ├── FunRaw/
 │   ├── sub000001/
@@ -73,9 +60,11 @@ RootDir/
     │   ├── 000003.dcm
     │   └── ......
     └── ......
+```
 
 For NIFTI format data, please organize your data in the following structure:
 
+```
 RootDir/
 ├── FunImg/
 │   ├── sub000001/
@@ -102,12 +91,12 @@ RootDir/
     │   ├── sub000003_T1w_Crop_1.nii
     │   └── sub000003_T1w.json
     └── ......
+```
 
 For testing and demonstration purposes, you can download sample resting-state fMRI data in DICOM format from:
 https://rfmri.org/content/demonstrational-data-resting-state-fmri
 
 The data is already organized in the required directory structure and can be used directly with REPA after downloading and extracting.
-
 
 ## Usage Instructions
 
@@ -122,57 +111,32 @@ The data is already organized in the required directory structure and can be use
 
 ## Processing Pipeline
 
-1. Initial Volume Removal
-   - First 10 volumes are discarded to allow for signal stabilization
+1. **Remove the first few time points**: The first few volumes are discarded to allow signal stabilization.
 
-2. Slice Timing Correction
-   - Corrects for differences in slice acquisition timing
+2. **Slice Timing Correction**: All functional time series are processed by slice timing correction to account for differences in slice acquisition timing.
 
-3. Head Motion Correction (Realignment)
-   - Realigns functional volumes to correct for head movement
+3. **Realignment**: Motion correction is applied to realign all functional volumes and correct for head movement.
 
-4. EPI Coverage Check
-   - Automask generation for quality control
-   - Group mask creation
+4. **Generating Automask**: Automask is generated for checking EPI coverage and creating group mask.
 
-5. Brain Extraction (BET)
-   - Removes non-brain tissue from images
+5. **BET**: Brain Extraction Tool (BET) is used to remove non-brain tissue from images.
 
-6. Structural-Functional Coregistration
-   - T1 image is coregistered to mean functional image
+6. **Coregistration**: The structural T1 image is coregistered to the mean functional image to maximize mutual information between them.
 
-7. Segmentation and DARTEL
-   - New Segment for tissue classification
-   - DARTEL for improved registration
+7. **Segmentation**: The coregistered structural data is segmented into gray matter, white matter and cerebrospinal fluid using New Segment, followed by DARTEL registration.
 
-8. Nuisance Regression
-   - Polynomial trend removal
-   - Head motion parameters
-   - White matter signal
-   - CSF signal
-   - Global signal
+8. **Nuisance Covariates Regression**: Nuisance covariates regression removes noise including polynomial trend, head motion parameters (Friston 24-parameter model), and mean signals from white matter, CSF and global signal.
 
-9. DARTEL Normalization
-   - Normalizes data to standard space
+9. **Normalization**: The preprocessed data is normalized to MNI space using DARTEL transformations.
 
-# Data Analysis Pipeline
+10. **ALFF**: ALFF and fALFF analyses are performed to measure the amplitude of low frequency fluctuations.
 
-1. ALFF/fALFF Analysis
-   - Amplitude of low frequency fluctuations
-   - Fractional ALFF
+11. **Filtering**: Temporal bandpass filtering is applied with frequency range 0.01-0.1 Hz.
 
-2. Temporal Filtering
-   - Bandpass filter: 0.01-0.1 Hz
+12. **ReHo**: Regional Homogeneity (ReHo) analysis is conducted to measure local connectivity.
 
-3. Regional Homogeneity (ReHo)
-   - Local connectivity measure
+13. **Degree Centrality**: Degree Centrality is calculated as a measure of global connectivity.
 
-4. Degree Centrality
-   - Global connectivity measure
+14. **VMHC**: Data is normalized to symmetric template for VMHC (Voxel-Mirrored Homotopic Connectivity) analysis.
 
-5. Template Normalization
-   - Normalize to symmetric template
-   - VMHC analysis
-
-6. Spatial Smoothing
-   - Final smoothing of derivative maps
+15. **Smoothing**: Spatial smoothing is applied to all derivative maps.
