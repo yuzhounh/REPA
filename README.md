@@ -168,3 +168,7 @@ The data is already organized in the required directory structure and can be use
    - Real-time progress tracking
    - Estimated time remaining for each processing step
    - Clear status updates throughout pipeline execution
+  
+## Contact
+
+Jing Wang (wangjing@xynu.edu.cn)
