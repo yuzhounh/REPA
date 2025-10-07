@@ -168,3 +168,7 @@ https://rfmri.org/content/demonstrational-data-resting-state-fmri
    - 实时进度跟踪
    - 每个处理步骤的预计剩余时间
    - 整个流程执行过程中的清晰状态更新
+
+## 联系方式
+
+Jing Wang (wangjing@xynu.edu.cn)
