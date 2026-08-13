@@ -23,4 +23,9 @@ fprintf(fileID, '0,%s\n', char(current_time));
 
 % Close file
 fclose(fileID);
+
+status_file = fullfile(working_dir, 'repa_gui_status.txt');
+if isfile(status_file)
+    delete(status_file);
+end
 end

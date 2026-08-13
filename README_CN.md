@@ -7,8 +7,10 @@ REPA (静息态功能磁共振成像预处理与分析工具) 是一个基于 SP
 ## 系统要求
 
 - MATLAB
+- **Image Processing Toolbox**（推荐；`niftiinfo` / `nifti` 读取 NIfTI 元数据与输入数据时使用）
 - SPM12（固定版本：`spm12`）
 - DPABI V8.2（固定版本：`DPABI_V8.2_240510`）
+- **dcm2niix**（随 pinned DPABI 提供，位于 `DPARSF/dcm2nii/`；DICOM 输入必需）
 
 REPA 按以下顺序查找依赖：
 
@@ -21,9 +23,9 @@ REPA 按以下顺序查找依赖：
 
 MATLAB path 中的其他 SPM/DPABI 版本会被忽略；版本不符时会直接报错。
 
-REPA v1.35.0 仅在 **SPM12 + DPABI V8.2_240510** 上测试通过。
+REPA v1.36.0 仅在 **SPM12 + DPABI V8.2_240510** 上测试通过。
 
-## 默认流程（v1.35.0）
+## 默认流程（v1.35.0+）
 
 ### 包含的步骤
 
@@ -79,6 +81,7 @@ REPA/
 └── third_party/
     ├── spm12/
     └── DPABI_V8.2_240510/
+        └── DPARSF/dcm2nii/   # DICOM 转换用的 dcm2niix 可执行文件
 ```
 
 若本机其他位置已安装 SPM 和 DPABI，可自动复制到 `third_party/`：
@@ -196,6 +199,13 @@ https://rfmri.org/content/demonstrational-data-resting-state-fmri
    - `滤波频段(Hz)`：设置时间滤波频率范围，格式为[低, 高]（默认为[0.01, 0.1]）
 3. 点击`运行`按钮开始处理
 
+GUI 支持：
+
+- 首次运行前 **检查依赖**（SPM、DPABI、`niftiinfo`、内置 dcm2niix）
+- **输入格式**选择：自动检测 DICOM 或 NIfTI
+- 可选 **GSR 流程**
+- **后台运行**并在状态面板显示进度
+
 ## 处理流程
 
 1. **删除前几个时间点**：丢弃前几个体积以允许信号稳定。
@@ -249,6 +259,7 @@ https://rfmri.org/content/demonstrational-data-resting-state-fmri
    - 便于错误追踪和调试
 
 5. **增强用户体验**：
+   - 基于 App Designer 的 GUI：依赖检查、输入校验、进度日志、后台运行
    - 清晰有序的控制台输出
    - 实时进度跟踪
    - 每个处理步骤的预计剩余时间

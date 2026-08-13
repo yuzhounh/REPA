@@ -7,8 +7,10 @@ REPA (Resting-state fMRI Preprocessing and Analysis) is a toolbox developed base
 ## Requirements
 
 - MATLAB
+- **Image Processing Toolbox** (recommended; used by `niftiinfo` / `nifti` for metadata and NIfTI input)
 - SPM12 (pinned: `spm12`)
 - DPABI V8.2 (pinned: `DPABI_V8.2_240510`)
+- **dcm2niix** (bundled inside pinned DPABI at `DPARSF/dcm2nii/`; required for DICOM input)
 
 REPA resolves dependencies in this order:
 
@@ -21,9 +23,9 @@ REPA resolves dependencies in this order:
 
 Other SPM/DPABI versions on the MATLAB path are ignored. Version mismatches are rejected.
 
-REPA v1.35.0 is tested with **SPM12 + DPABI V8.2_240510** only.
+REPA v1.36.0 is tested with **SPM12 + DPABI V8.2_240510** only.
 
-## Default pipeline (v1.35.0)
+## Default pipeline (v1.35.0+)
 
 ### Included
 
@@ -79,6 +81,7 @@ REPA/
 └── third_party/
     ├── spm12/
     └── DPABI_V8.2_240510/
+        └── DPARSF/dcm2nii/   # dcm2niix binaries for DICOM conversion
 ```
 
 You can prepare this folder automatically if SPM and DPABI are already installed elsewhere:
@@ -196,6 +199,13 @@ The data is already organized in the required directory structure and can be use
    - `Filter band (Hz)`: Set the temporal filtering frequency range in [low, high] format (default is [0.01, 0.1])
 3. Click the `RUN` button to start processing
 
+The GUI supports:
+
+- **Check Dependencies** before the first run (SPM, DPABI, `niftiinfo`, bundled dcm2niix)
+- **Input format** selection: auto-detect DICOM or NIfTI
+- Optional **GSR pipeline pass**
+- **Background processing** with live progress in the status panel
+
 ## Processing Pipeline
 
 1. **Remove the first few time points**: The first few volumes are discarded to allow signal stabilization.
@@ -249,6 +259,7 @@ The data is already organized in the required directory structure and can be use
    - Easy error tracking and debugging
 
 5. **Enhanced User Experience**:
+   - Modern App Designer GUI with dependency check, input validation, progress log, and background processing
    - Clean and organized console output
    - Real-time progress tracking
    - Estimated time remaining for each processing step

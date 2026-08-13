@@ -1,7 +1,7 @@
 clear,clc;
 
 % Update REPA version
-repa_version = '1.35.0';
+repa_version = '1.36.0';
 repa_releaseDate = char(datetime('now', 'Format', 'yyyy/MM/dd'));
 working_path = fullfile(fileparts(which('repa.m')), 'repa_utilities');
 save(fullfile(working_path, 'repa_version.mat'),'repa_version','repa_releaseDate');

@@ -65,6 +65,17 @@ fprintf('%s', output_str);
 fprintf('%s\n',repmat('-',1,72));
 fprintf('\n');
 
+% Update GUI status file when present
+status_file = fullfile(working_dir, 'repa_gui_status.txt');
+try
+    fileID = fopen(status_file, 'w');
+    if fileID > 0
+        fprintf(fileID, '%s', output_str);
+        fclose(fileID);
+    end
+catch
+end
+
 end
 
 

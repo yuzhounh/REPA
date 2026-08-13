@@ -1,42 +1,52 @@
-function starting_dir = repa_check_directories(working_dir)
-    % output the working directory
-    fprintf('%s\n\n',repmat('-',1,72));
-    fprintf('Working directory: %s\n', working_dir); 
+function starting_dir = repa_check_directories(working_dir, preferred_start)
+% Determine whether processing starts from DICOM (FunRaw) or NIfTI (FunImg).
+if nargin < 2 || isempty(preferred_start) || strcmpi(preferred_start, 'auto')
+    preferred_start = 'auto';
+end
 
-    % Check for FunRaw and T1Raw directories
-    [funRawExists, t1RawExists] = checkFunRawDirectories(working_dir);
-    
-    % Check for FunImg and T1Img directories
-    [funImgExists, t1ImgExists] = checkFunImgDirectories(working_dir);
+fprintf('%s\n\n', repmat('-', 1, 72));
+fprintf('Working directory: %s\n', working_dir);
 
+[funRawExists, t1RawExists] = checkFunRawDirectories(working_dir);
+[funImgExists, t1ImgExists] = checkFunImgDirectories(working_dir);
+
+if strcmpi(preferred_start, 'auto')
     if funImgExists && t1ImgExists
         fprintf('Starting from NIfTI files.\n');
-        starting_dir = 'FunImg'; 
+        starting_dir = 'FunImg';
     elseif funRawExists && t1RawExists
         fprintf('Starting from DICOM files.\n');
-        starting_dir = 'FunRaw'; 
+        starting_dir = 'FunRaw';
     else
-        error('Invalid starting directory.\n');
+        error(['Invalid starting directory. Expected either:\n', ...
+            '  FunImg/ + T1Img/\n', ...
+            '  FunRaw/ + T1Raw/']);
     end
-    fprintf('\n');
+elseif strcmpi(preferred_start, 'FunRaw')
+    if ~(funRawExists && t1RawExists)
+        error('DICOM input selected, but FunRaw/ and T1Raw/ were not found.');
+    end
+    fprintf('Starting from DICOM files.\n');
+    starting_dir = 'FunRaw';
+elseif strcmpi(preferred_start, 'FunImg')
+    if ~(funImgExists && t1ImgExists)
+        error('NIfTI input selected, but FunImg/ and T1Img/ were not found.');
+    end
+    fprintf('Starting from NIfTI files.\n');
+    starting_dir = 'FunImg';
+else
+    error('Unknown starting directory mode: %s', preferred_start);
+end
+
+fprintf('\n');
 end
 
 function [funImgExists, t1ImgExists] = checkFunImgDirectories(working_dir)
-    % Check if 'FunImg' directory exists
-    funImgPath = fullfile(working_dir, 'FunImg');
-    funImgExists = isfolder(funImgPath);
-    
-    % Check if 'T1Img' directory exists
-    t1ImgPath = fullfile(working_dir, 'T1Img');
-    t1ImgExists = isfolder(t1ImgPath);
+funImgExists = isfolder(fullfile(working_dir, 'FunImg'));
+t1ImgExists = isfolder(fullfile(working_dir, 'T1Img'));
 end
 
 function [funRawExists, t1RawExists] = checkFunRawDirectories(working_dir)
-    % Check if 'FunRaw' directory exists
-    funRawPath = fullfile(working_dir, 'FunRaw');
-    funRawExists = isfolder(funRawPath);
-    
-    % Check if 'T1Raw' directory exists
-    t1RawPath = fullfile(working_dir, 'T1Raw');
-    t1RawExists = isfolder(t1RawPath);
+funRawExists = isfolder(fullfile(working_dir, 'FunRaw'));
+t1RawExists = isfolder(fullfile(working_dir, 'T1Raw'));
 end

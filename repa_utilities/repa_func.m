@@ -8,6 +8,18 @@ voxel_size = para.voxel_size;
 FWHM = para.FWHM;
 filter_band = para.filter_band;
 
+if isfield(para, 'starting_dir') && ~isempty(para.starting_dir)
+    starting_mode = para.starting_dir;
+else
+    starting_mode = 'auto';
+end
+
+if isfield(para, 'run_gsr')
+    run_gsr = logical(para.run_gsr);
+else
+    run_gsr = true;
+end
+
 %% prepare
 % customized scripts
 working_path = fullfile(fileparts(which('repa.m')), 'repa_utilities');
@@ -16,7 +28,7 @@ working_path = fullfile(fileparts(which('repa.m')), 'repa_utilities');
 repa_welcome;
 
 % check the working directory
-starting_dir = repa_check_directories(working_dir);
+starting_dir = repa_check_directories(working_dir, starting_mode);
 
 % install related softwares
 repa_installation(working_dir);
@@ -136,11 +148,13 @@ repa_restore_data;
 fmri_info_file = fullfile(working_dir,'repa_fmri_info.csv');
 repa_fmri_info(working_dir, fmri_info_file);
 
-% DPARSFA without and with GSR
+% DPARSFA without and with optional GSR
 repa_progress_init(working_dir);
 for i = 1:num_subject
     repa_run(i);      % DPARSFA
-    repa_run_GSR(i);  % DPARSFA with GSR
+    if run_gsr
+        repa_run_GSR(i);  % DPARSFA with GSR
+    end
     repa_progress(i, num_subject, working_dir);
 end
 
