@@ -5010,131 +5010,131 @@ end
 
 
 
-% %Smooth on Results
-% if (AutoDataProcessParameter.IsSmooth>=1) && strcmpi(AutoDataProcessParameter.Smooth.Timing,'OnResults')
-% 
-%     %Check the measures need to be normalized
-%     DirMeasure = dir([AutoDataProcessParameter.DataProcessDir,filesep,AutoDataProcessParameter.StartingDirName]);
-%     if strcmpi(DirMeasure(3).name,'.DS_Store')  %110908 YAN Chao-Gan, for MAC OS compatablie
-%         StartIndex=4;
-%     else
-%         StartIndex=3;
-%     end
-%     MeasureSet=[];
-%     for iDir=StartIndex:length(DirMeasure)
-%         if DirMeasure(iDir).isdir
-%             if ~((length(DirMeasure(iDir).name)>=10 && strcmpi(DirMeasure(iDir).name(1:10),'ROISignals'))) %~((length(DirMeasure(iDir).name)>10 && strcmpi(DirMeasure(iDir).name(end-10:end),'_ROISignals')))
-%                 MeasureSet = [MeasureSet;{DirMeasure(iDir).name}];
-%             end
-%         end
-% 
-%     end
-% 
-%     fprintf('Smoothing the resutls...');
-% 
-% 
-%     if (AutoDataProcessParameter.IsSmooth==1)
-%         for i=1:AutoDataProcessParameter.SubjectNum
-% 
-%             FileList=[];
-%             for iFunSession=1:AutoDataProcessParameter.FunctionalSessionNumber
-%                 for iMeasure=1:length(MeasureSet)
-%                     cd([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure}]);
-%                     DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.img']);
-%                     for j=1:length(DirImg)
-%                         FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
-%                     end
-% 
-%                     DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.nii']);
-%                     for j=1:length(DirImg)
-%                         FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
-%                     end
-%                 end
-% 
-%             end
-% 
-%             SPMJOB = load([ProgramPath,filesep,'Jobmats',filesep,'Smooth.mat']);
-%             SPMJOB.matlabbatch{1,1}.spm.spatial.smooth.data = FileList;
-%             SPMJOB.matlabbatch{1,1}.spm.spatial.smooth.fwhm = AutoDataProcessParameter.Smooth.FWHM;
-%             spm_jobman('run',SPMJOB.matlabbatch);
-% 
-%         end
-% 
-%     elseif (AutoDataProcessParameter.IsSmooth==2)   %YAN Chao-Gan, 111111. Smooth by DARTEL. The smoothing that is a part of the normalization to MNI space computes these average intensities from the original data, rather than the warped versions. When the data are warped, some voxels will grow and others will shrink. This will change the regional averages, with more weighting towards those voxels that have grows.
-% 
-%         for i=1:AutoDataProcessParameter.SubjectNum
-% 
-%             SPMJOB = load([ProgramPath,filesep,'Jobmats',filesep,'Dartel_NormaliseToMNI_FewSubjects.mat']);
-% 
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.fwhm=AutoDataProcessParameter.Smooth.FWHM;
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.preserve=0;
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.bb=AutoDataProcessParameter.Normalize.BoundingBox;
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.vox=AutoDataProcessParameter.Normalize.VoxSize;
-% 
-%             DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,'Template_6.*']);
-%             [pathstr,name,ext] = fileparts(DirImg(1).name); %YAN Chao-Gan, 151129. Check if it's .nii.gz
-%             if strcmpi(ext,'.gz')
-%                 gunzip([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,DirImg(1).name]);
-%                 delete([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,DirImg(1).name]);
-%                 DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,'Template_6.*']);
-%             end
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.template={[AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,DirImg(1).name]};
-% 
-%             FileList=[];
-%             for iFunSession=1:AutoDataProcessParameter.FunctionalSessionNumber
-%                 for iMeasure=1:length(MeasureSet)
-%                     cd([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure}]);
-%                     DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.img']);
-%                     for j=1:length(DirImg)
-%                         FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
-%                     end
-% 
-%                     DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.nii']);
-%                     for j=1:length(DirImg)
-%                         FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
-%                     end
-%                 end
-% 
-%             end
-% 
-% 
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.data.subj(1,1).images=FileList;
-% 
-%             DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,'u_*']);
-%             [pathstr,name,ext] = fileparts(DirImg(1).name); %YAN Chao-Gan, 151129. Check if it's .nii.gz
-%             if strcmpi(ext,'.gz')
-%                 gunzip([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,DirImg(1).name]);
-%                 delete([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,DirImg(1).name]);
-%                 DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,'u_*']);
-%             end
-%             SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.data.subj(1,1).flowfield={[AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,DirImg(1).name]};
-% 
-%             spm_jobman('run',SPMJOB.matlabbatch);
-%             fprintf(['Smooth by using DARTEL: ',AutoDataProcessParameter.SubjectID{i},' - Done\n\n']);
-%         end
-% 
-%     end
-% 
-% 
-%     %Copy the Smoothed files to ResultsWS or ResultsS
-%     fprintf('Moving Smoothed Files: \n');
-%     for iFunSession=1:AutoDataProcessParameter.FunctionalSessionNumber
-%         for iMeasure=1:length(MeasureSet)
-%             repa_mkdir([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,'S',filesep,MeasureSet{iMeasure}])
-%             if (AutoDataProcessParameter.IsSmooth==1)
-%                 movefile([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure},filesep,'s*'],[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,'S',filesep,MeasureSet{iMeasure}])
-%             elseif (AutoDataProcessParameter.IsSmooth==2) % If smoothed by DARTEL, then the smoothed files still under realign directory.
-%                 movefile([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure},filesep,'s*'],[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,'S',filesep,MeasureSet{iMeasure}])
-%             end
-%             fprintf('%s\n', MeasureSet{iMeasure});
-%         end
-%         % fprintf('\n');
-%     end
-%     fprintf('\nMoving Smoothed Files - Done \n\n\n\n');
-% 
-%     AutoDataProcessParameter.StartingDirName=[AutoDataProcessParameter.StartingDirName,'S']; %Now StartingDirName is with new suffix 'S'
-% 
-% end
+%Smooth on Results
+if (AutoDataProcessParameter.IsSmooth>=1) && strcmpi(AutoDataProcessParameter.Smooth.Timing,'OnResults')
+
+    %Check the measures need to be normalized
+    DirMeasure = dir([AutoDataProcessParameter.DataProcessDir,filesep,AutoDataProcessParameter.StartingDirName]);
+    if strcmpi(DirMeasure(3).name,'.DS_Store')  %110908 YAN Chao-Gan, for MAC OS compatablie
+        StartIndex=4;
+    else
+        StartIndex=3;
+    end
+    MeasureSet=[];
+    for iDir=StartIndex:length(DirMeasure)
+        if DirMeasure(iDir).isdir
+            if ~( (length(DirMeasure(iDir).name)>=4 && strcmpi(DirMeasure(iDir).name(1:4),'VMHC')) || (length(DirMeasure(iDir).name)>=10 && strcmpi(DirMeasure(iDir).name(1:10),'ROISignals')))
+                MeasureSet = [MeasureSet;{DirMeasure(iDir).name}];
+            end
+        end
+
+    end
+
+    fprintf('Smoothing the resutls...');
+
+
+    if (AutoDataProcessParameter.IsSmooth==1)
+        for i=1:AutoDataProcessParameter.SubjectNum
+
+            FileList=[];
+            for iFunSession=1:AutoDataProcessParameter.FunctionalSessionNumber
+                for iMeasure=1:length(MeasureSet)
+                    cd([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure}]);
+                    DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.img']);
+                    for j=1:length(DirImg)
+                        FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
+                    end
+
+                    DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.nii']);
+                    for j=1:length(DirImg)
+                        FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
+                    end
+                end
+
+            end
+
+            SPMJOB = load([ProgramPath,filesep,'Jobmats',filesep,'Smooth.mat']);
+            SPMJOB.matlabbatch{1,1}.spm.spatial.smooth.data = FileList;
+            SPMJOB.matlabbatch{1,1}.spm.spatial.smooth.fwhm = AutoDataProcessParameter.Smooth.FWHM;
+            spm_jobman('run',SPMJOB.matlabbatch);
+
+        end
+
+    elseif (AutoDataProcessParameter.IsSmooth==2)   %YAN Chao-Gan, 111111. Smooth by DARTEL. The smoothing that is a part of the normalization to MNI space computes these average intensities from the original data, rather than the warped versions. When the data are warped, some voxels will grow and others will shrink. This will change the regional averages, with more weighting towards those voxels that have grows.
+
+        for i=1:AutoDataProcessParameter.SubjectNum
+
+            SPMJOB = load([ProgramPath,filesep,'Jobmats',filesep,'Dartel_NormaliseToMNI_FewSubjects.mat']);
+
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.fwhm=AutoDataProcessParameter.Smooth.FWHM;
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.preserve=0;
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.bb=AutoDataProcessParameter.Normalize.BoundingBox;
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.vox=AutoDataProcessParameter.Normalize.VoxSize;
+
+            DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,'Template_6.*']);
+            [pathstr,name,ext] = fileparts(DirImg(1).name); %YAN Chao-Gan, 151129. Check if it's .nii.gz
+            if strcmpi(ext,'.gz')
+                gunzip([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,DirImg(1).name]);
+                delete([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,DirImg(1).name]);
+                DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,'Template_6.*']);
+            end
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.template={[AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{1},filesep,DirImg(1).name]};
+
+            FileList=[];
+            for iFunSession=1:AutoDataProcessParameter.FunctionalSessionNumber
+                for iMeasure=1:length(MeasureSet)
+                    cd([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure}]);
+                    DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.img']);
+                    for j=1:length(DirImg)
+                        FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
+                    end
+
+                    DirImg=dir(['*',AutoDataProcessParameter.SubjectID{i},'*.nii']);
+                    for j=1:length(DirImg)
+                        FileList=[FileList;{[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure},filesep,DirImg(j).name]}];
+                    end
+                end
+
+            end
+
+
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.data.subj(1,1).images=FileList;
+
+            DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,'u_*']);
+            [pathstr,name,ext] = fileparts(DirImg(1).name); %YAN Chao-Gan, 151129. Check if it's .nii.gz
+            if strcmpi(ext,'.gz')
+                gunzip([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,DirImg(1).name]);
+                delete([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,DirImg(1).name]);
+                DirImg=dir([AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,'u_*']);
+            end
+            SPMJOB.matlabbatch{1,1}.spm.tools.dartel.mni_norm.data.subj(1,1).flowfield={[AutoDataProcessParameter.DataProcessDir,filesep,'T1ImgNewSegment',filesep,AutoDataProcessParameter.SubjectID{i},filesep,DirImg(1).name]};
+
+            spm_jobman('run',SPMJOB.matlabbatch);
+            fprintf(['Smooth by using DARTEL: ',AutoDataProcessParameter.SubjectID{i},' - Done\n\n']);
+        end
+
+    end
+
+
+    %Copy the Smoothed files to ResultsWS or ResultsS
+    fprintf('Moving Smoothed Files: \n');
+    for iFunSession=1:AutoDataProcessParameter.FunctionalSessionNumber
+        for iMeasure=1:length(MeasureSet)
+            repa_mkdir([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,'S',filesep,MeasureSet{iMeasure}])
+            if (AutoDataProcessParameter.IsSmooth==1)
+                movefile([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,filesep,MeasureSet{iMeasure},filesep,'s*'],[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,'S',filesep,MeasureSet{iMeasure}])
+            elseif (AutoDataProcessParameter.IsSmooth==2) % If smoothed by DARTEL, then the smoothed files still under realign directory.
+                movefile([AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName(1:end-1),filesep,MeasureSet{iMeasure},filesep,'s*'],[AutoDataProcessParameter.DataProcessDir,filesep,FunSessionPrefixSet{iFunSession},AutoDataProcessParameter.StartingDirName,'S',filesep,MeasureSet{iMeasure}])
+            end
+            fprintf('%s\n', MeasureSet{iMeasure});
+        end
+        % fprintf('\n');
+    end
+    fprintf('\nMoving Smoothed Files - Done \n\n\n\n');
+
+    AutoDataProcessParameter.StartingDirName=[AutoDataProcessParameter.StartingDirName,'S']; %Now StartingDirName is with new suffix 'S'
+
+end
 
 if ~isempty(Error)
     disp(Error);

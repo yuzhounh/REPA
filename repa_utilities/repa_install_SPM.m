@@ -1,82 +1,77 @@
-function spm_version = repa_install_SPM()
+function spm_version = repa_install_SPM(working_dir)
 % Function to check and install SPM (Statistical Parametric Mapping)
 % 2024-10-16
 
-fprintf('Install SPM...\n');
-
-% Step 1: Try to get SPM version
-try
-    spm_version = spm('Ver');
-    fprintf('SPM version: %s\n\n', spm_version);
-    return;
-catch
-    % fprintf('Could not get SPM version. Moving to next step.\n');
+if nargin < 1
+    working_dir = '';
 end
 
-% Step 2: Try to add SPM to path
-try
-    SPM_dir = dir('spm*');
-    SPM_dir = SPM_dir([SPM_dir.isdir]);
-    addpath(SPM_dir(1).name);
-    spm_version = spm('Ver');
-    fprintf('SPM version: %s\n\n', spm_version);
+deps = repa_pinned_dependencies();
+fprintf('Install SPM (pinned: %s)...\n', deps.spm_folder);
+
+% Step 1: Local pinned folders (third_party first, then working directory, then pwd)
+depPath = repa_resolve_dependency_path(deps.spm_folder, working_dir);
+if ~isempty(depPath)
+    spm_version = repa_activate_pinned_spm(depPath, deps);
     return;
-catch
-    % fprintf('Could not add SPM to path. Moving to next step.\n');
 end
 
-% Step 3: Try to unzip SPM and add to path
-try
-    spm_zip = dir('spm*.zip');
-    unzip(spm_zip(1).name);
-    SPM_dir = dir('spm*');
-    SPM_dir = SPM_dir([SPM_dir.isdir]);
-    addpath(SPM_dir(1).name);
-    spm_version = spm('Ver');
-    fprintf('SPM version: %s\n\n', spm_version);
+% Step 2: Exact local zip archives
+zipPath = repa_resolve_dependency_zip(deps.spm_zip_name, working_dir);
+if ~isempty(zipPath)
+    spm_version = repa_extract_and_activate_spm(zipPath, working_dir, deps);
     return;
-catch
-    % fprintf('Could not unzip and add SPM to path. Moving to next step.\n');
 end
 
-% Step 4: Try to download SPM12 from official website
+% Step 3: Download pinned SPM12 release into REPA/third_party
 try
-    spm_url = 'https://www.fil.ion.ucl.ac.uk/spm/download/restricted/eldorado/spm12.zip';
-    spm_zip = fullfile(pwd, 'spm12.zip');
-    fprintf('\nStarting download from:\n%s\n', spm_url);
-    websave(spm_zip, spm_url);
+    extractDir = repa_third_party_root();
+    if ~isfolder(extractDir)
+        mkdir(extractDir);
+    end
+
+    spm_zip = fullfile(extractDir, deps.spm_zip_name);
+    fprintf('\nStarting download into third_party from:\n%s\n', deps.spm_zip_url);
+    websave(spm_zip, deps.spm_zip_url);
     fprintf('Download completed.\n\n');
-    fprintf('Starting extraction and installation of SPM.\n');
-    unzip(spm_zip);
-    SPM_dir = dir('spm*');
-    SPM_dir = SPM_dir([SPM_dir.isdir]);
-    addpath(SPM_dir(1).name);
-    spm_version = spm('Ver');
-    fprintf('SPM version: %s\n\n', spm_version);
+    spm_version = repa_extract_and_activate_spm(spm_zip, working_dir, deps);
     return;
 catch
-    % fprintf('Could not download SPM from official website. Moving to next step.\n');
 end
 
-% Step 5: Try to download SPM12 from GitHub
-try
-    github_url = 'https://codeload.github.com/spm/spm12/zip/refs/heads/main';
-    spm_zip = fullfile(pwd, 'spm12.zip');
-    fprintf('\nStarting download from:\n%s\n', github_url);
-    websave(spm_zip, github_url);
-    fprintf('Download completed.\n\n');
-    fprintf('Starting extraction and installation of SPM.\n');
-    unzip(spm_zip);
-    SPM_dir = dir('spm*');
-    SPM_dir = SPM_dir([SPM_dir.isdir]);
-    addpath(SPM_dir(1).name);
-    spm_version = spm('Ver');
+% Step 4: MATLAB path, only if it already points to pinned spm12
+[isPinned, spm_version] = repa_try_pinned_spm_from_path(deps);
+if isPinned
+    fprintf('Using pinned SPM already on MATLAB path.\n');
     fprintf('SPM version: %s\n\n', spm_version);
     return;
-catch
-    % fprintf('Could not download SPM from GitHub.\n');
 end
 
-% Step 6: If all steps fail, display error message
-error('Failed to download and install SPM. Please install manually.');
+repa_install_dependency_error('SPM', deps.spm_folder, deps.spm_zip_url, working_dir);
+end
+
+function spm_version = repa_activate_pinned_spm(depPath, deps)
+fprintf('Using local SPM folder:\n%s\n', depPath);
+addpath(depPath, '-begin');
+spm_version = spm('Ver');
+repa_validate_pinned_spm(spm_version, deps);
+fprintf('SPM version: %s\n\n', spm_version);
+end
+
+function spm_version = repa_extract_and_activate_spm(zipPath, working_dir, deps)
+extractDir = repa_third_party_root();
+if ~isfolder(extractDir)
+    mkdir(extractDir);
+end
+
+fprintf('Extracting SPM archive:\n%s\n', zipPath);
+unzip(zipPath, extractDir);
+
+depPath = repa_resolve_dependency_path(deps.spm_folder, working_dir);
+if isempty(depPath)
+    error('SPM archive extracted, but folder "%s" was not found under %s.', ...
+        deps.spm_folder, extractDir);
+end
+
+spm_version = repa_activate_pinned_spm(depPath, deps);
 end

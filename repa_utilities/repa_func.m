@@ -77,21 +77,44 @@ Cfg.Filter.ALowPass_HighCutoff = filter_band(2);
 Cfg.CalALFF.AHighPass_LowCutoff = filter_band(1);
 Cfg.CalALFF.ALowPass_HighCutoff = filter_band(2);
 Cfg.StartingDirName = 'FunImg';
+Cfg.RemoveFirstTimePoints = time_points_removed;
+Cfg.IsRemoveFirstTimePoints = time_points_removed > 0;
 
 % overwrite the default configuration of DPARSFA
 save(fullfile(working_path,'repa_config_DPARSFA.mat'),'Cfg');
 
 %% configuration for DPARSFA with GSR
 % load the default configuration of DPARSFA with GSR
-load(fullfile(working_path,'repa_config_DPARSFA_with_GSR.mat'),'Cfg');
+load(fullfile(working_path,'repa_config_DPARSFA_with_GSR.mat'),'CfgGSR');
+
+% keep GSR-specific settings, sync pipeline options with the main config
+pipelineFields = {'IsNormalize','IsSegment','IsDARTEL','IsNeedT1CoregisterToFun', ...
+    'IsNormalizeToSymmetricGroupT1Mean','IsCalVMHC','IsSmoothBeforeVMHC','IsSmooth', ...
+    'Normalize','Smooth','Filter','CalALFF','ParallelWorkersNumber'};
+for iField = 1:numel(pipelineFields)
+    fieldName = pipelineFields{iField};
+    if isfield(Cfg, fieldName)
+        CfgGSR.(fieldName) = Cfg.(fieldName);
+    end
+end
 
 % modify configuration
-Cfg.WorkingDir = working_dir;
-Cfg.DataProcessDir = working_dir;
-Cfg.SubjectID = SubjectID;
+CfgGSR.WorkingDir = working_dir;
+CfgGSR.DataProcessDir = working_dir;
+CfgGSR.SubjectID = SubjectID;
+CfgGSR.Normalize.VoxSize = voxel_size;
+CfgGSR.Smooth.FWHM = FWHM;
+CfgGSR.Filter.AHighPass_LowCutoff = filter_band(1);
+CfgGSR.Filter.ALowPass_HighCutoff = filter_band(2);
+CfgGSR.CalALFF.AHighPass_LowCutoff = filter_band(1);
+CfgGSR.CalALFF.ALowPass_HighCutoff = filter_band(2);
 
 % Starting directory will change to 'FunImgARglobal' in DPARSFA_with_GSR_serial.m
-Cfg.StartingDirName = 'FunImg';  
+CfgGSR.StartingDirName = 'FunImg';
+CfgGSR.RemoveFirstTimePoints = time_points_removed;
+CfgGSR.IsRemoveFirstTimePoints = time_points_removed > 0;
+
+Cfg = CfgGSR;
 
 % overwrite the default configuration of DPARSFA with GSR
 save(fullfile(working_path,'repa_config_DPARSFA_with_GSR.mat'),'Cfg');

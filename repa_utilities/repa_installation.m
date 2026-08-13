@@ -6,10 +6,10 @@ fprintf('%s\n\n',repmat('-',1,72));
 
 %% Installation
 % Install SPM
-spmVersion = repa_install_SPM;
+spmVersion = repa_install_SPM(working_dir);
 
 % Install DPABI
-dpabiVersion = repa_install_DPABI;
+dpabiVersion = repa_install_DPABI(working_dir);
 
 fprintf('Installation is completed.\n\n');
 

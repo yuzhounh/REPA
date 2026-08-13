@@ -7,14 +7,101 @@ REPA (Resting-state fMRI Preprocessing and Analysis) is a toolbox developed base
 ## Requirements
 
 - MATLAB
-- SPM12
-- DPABI
+- SPM12 (pinned: `spm12`)
+- DPABI V8.2 (pinned: `DPABI_V8.2_240510`)
+
+REPA resolves dependencies in this order:
+
+1. `REPA/third_party/` (recommended for offline use)
+2. The data working directory
+3. The current MATLAB working directory
+4. Exact local zip names (`spm12.zip`, `DPABI_V8.2_240510.zip`)
+5. Online download into `REPA/third_party/` (last resort)
+6. MATLAB path, only if it already points to the pinned release
+
+Other SPM/DPABI versions on the MATLAB path are ignored. Version mismatches are rejected.
+
+REPA v1.35.0 is tested with **SPM12 + DPABI V8.2_240510** only.
+
+## Default pipeline (v1.35.0)
+
+### Included
+
+- Remove initial volumes, slice timing, realignment, automask, BET, T1–EPI coregistration
+- SPM12 unified segmentation (`IsSegment=1`)
+- MNI normalization via T1 unified-segmentation deformation fields (`IsNormalize=2`, **not DARTEL**)
+- Nuisance regression (WM/CSF; optional GSR in a separate pass)
+- ALFF / fALFF, band-pass filtering, ReHo, degree centrality
+- Spatial smoothing on result maps after normalization (`Smooth.Timing='OnResults'`)
+
+### Not included by default
+
+- DARTEL registration / DARTEL-based normalization (`IsDARTEL=0`)
+- Symmetric group T1 mean normalization
+- VMHC
+
+### Why unified segmentation instead of DARTEL?
+
+v1.34.0 used SPM New Segment + **DARTEL** (`IsNormalize=3`), which requires **group-level** steps (template creation and group normalization) before all subjects can proceed. That makes true per-subject parallelism difficult and means one subject failure can block the remaining pipeline inside a single DPARSFA run.
+
+v1.35.0 replaces DARTEL with **SPM12 unified segmentation + T1-segmentation normalization** (`IsSegment=1`, `IsNormalize=2`, `IsDARTEL=0`):
+
+1. Each subject is segmented and normalized using its own `*_seg_sn.mat` deformation field.
+2. No group DARTEL template step is required.
+3. Processing is orchestrated **one subject at a time** via `repa_run.m` + `DPARSFA_serial.m` (all upstream `parfor` loops converted to serial `for`).
+4. This design is **ready for outer parallelization** (e.g. multiple MATLAB workers / cluster jobs each running a different subject) because subjects no longer depend on a shared DARTEL template.
+
+### Error handling: skip failed subjects automatically
+
+REPA does **not** stop the whole batch when one subject fails:
+
+- Each subject runs in its own `repa_run(i)` call.
+- Errors are written to `errors/<SubjectID>_*.txt`.
+- Subsequent steps (including the GSR pass) **skip subjects with existing error files**.
+- Successful subjects continue through the full pipeline.
+
+This differs from stock `DPARSFA_run.m`, where a single subject error can abort the remaining steps for all subjects in the same run.
 
 ## Installation
 
 1. Download REPA from this repository
 2. Add REPA folder to MATLAB path
 3. Run `repa.m` to start the GUI
+
+### Offline installation (recommended)
+
+For stable, network-independent use, place the pinned dependencies under `REPA/third_party/`:
+
+```
+REPA/
+├── repa.m
+├── repa_utilities/
+└── third_party/
+    ├── spm12/
+    └── DPABI_V8.2_240510/
+```
+
+You can prepare this folder automatically if SPM and DPABI are already installed elsewhere:
+
+```matlab
+cd('<REPA root>');
+run('scripts/prepare_offline_bundle.m');
+```
+
+Or set source paths manually before running the script:
+
+```matlab
+spm_source = 'D:\tools\spm12';
+dpabi_source = 'D:\tools\DPABI_V8.2_240510';
+run('scripts/prepare_offline_bundle.m');
+```
+
+You can also download the pinned `.zip` files manually, extract them into `third_party/`, and skip online installation entirely:
+
+- SPM12: https://www.fil.ion.ucl.ac.uk/spm/download/restricted/eldorado/spm12.zip
+- DPABI: https://d.rnet.co/DPABI/DPABI_V8.2_240510.zip
+
+For release distribution, an optional offline package (REPA + `third_party/`) can be provided separately from the lightweight source archive.
 
 <img src="repa_utilities/repa_gui.png" width="80%" style="display: block; margin: 0 auto;">
 
@@ -123,11 +210,11 @@ The data is already organized in the required directory structure and can be use
 
 6. **Coregistration**: The structural T1 image is coregistered to the mean functional image to maximize mutual information between them.
 
-7. **Segmentation**: The coregistered structural data is segmented into gray matter, white matter and cerebrospinal fluid using New Segment, followed by DARTEL registration.
+7. **Segmentation**: The coregistered structural data is segmented into gray matter, white matter and cerebrospinal fluid using unified segmentation (SPM12).
 
-8. **Nuisance Covariates Regression**: Nuisance covariates regression removes noise including polynomial trend, head motion parameters (Friston 24-parameter model), and mean signals from white matter, CSF and global signal.
+8. **Nuisance Covariates Regression**: Nuisance covariates regression removes noise including polynomial trend, head motion parameters (Friston 24-parameter model), and mean signals from white matter and CSF (global signal regression is run as a separate pass when enabled).
 
-9. **Normalization**: The preprocessed data is normalized to MNI space using DARTEL transformations.
+9. **Normalization**: The preprocessed data is normalized to MNI space using T1 unified-segmentation deformation fields (`IsNormalize=2`, no DARTEL).
 
 10. **ALFF**: ALFF and fALFF analyses are performed to measure the amplitude of low frequency fluctuations.
 
@@ -137,9 +224,7 @@ The data is already organized in the required directory structure and can be use
 
 13. **Degree Centrality**: Degree Centrality is calculated as a measure of global connectivity.
 
-14. **VMHC**: Data is normalized to symmetric template for VMHC (Voxel-Mirrored Homotopic Connectivity) analysis.
-
-15. **Smoothing**: Spatial smoothing is applied to all derivative maps.
+14. **Smoothing**: Spatial smoothing is applied to derivative maps after normalization (`Smooth.Timing='OnResults'`).
 
 ## Key Features
 

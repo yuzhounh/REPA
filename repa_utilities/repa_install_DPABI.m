@@ -1,86 +1,77 @@
-function dpabi_version = repa_install_DPABI()
+function dpabi_version = repa_install_DPABI(working_dir)
 % Function to check and install DPABI (Data Processing & Analysis for Brain Imaging)
 % 2024-10-16
 
-fprintf('Install DPABI...\n');
-
-% Step 1: Try to get DPABI version
-try
-    dpabi_version = repa_DPABI_version();
-    fprintf('DPABI version: %s\n\n', dpabi_version);
-    return;
-catch
-    % fprintf('Could not get DPABI version. Moving to next step.\n');
+if nargin < 1
+    working_dir = '';
 end
 
-% Step 2: Try to add DPABI to path
-try
-    dpabi_dir = dir('DPABI*');
-    dpabi_dir = dpabi_dir([dpabi_dir.isdir]);
-    dpabi_dir = dpabi_dir(~endsWith({dpabi_dir.name}, '.zip'));
-    addpath(genpath(dpabi_dir(1).name));
-    dpabi_version = repa_DPABI_version();
-    fprintf('DPABI version: %s\n\n', dpabi_version);
+deps = repa_pinned_dependencies();
+fprintf('Install DPABI (pinned: %s)...\n', deps.dpabi_folder);
+
+% Step 1: Local pinned folders (third_party first, then working directory, then pwd)
+depPath = repa_resolve_dependency_path(deps.dpabi_folder, working_dir);
+if ~isempty(depPath)
+    dpabi_version = repa_activate_pinned_dpabi(depPath, deps);
     return;
-catch
-    % fprintf('Could not add DPABI to path. Moving to next step.\n');
 end
 
-% Step 3: Try to unzip DPABI and add to path
-try
-    dpabi_zip = dir('DPABI*.zip');
-    unzip(dpabi_zip(1).name);
-    dpabi_dir = dir('DPABI*');
-    dpabi_dir = dpabi_dir([dpabi_dir.isdir]);
-    dpabi_dir = dpabi_dir(~endsWith({dpabi_dir.name}, '.zip'));
-    addpath(genpath(dpabi_dir(1).name));
-    dpabi_version = repa_DPABI_version();
-    fprintf('DPABI version: %s\n\n', dpabi_version);
+% Step 2: Exact local zip archives
+zipPath = repa_resolve_dependency_zip(deps.dpabi_zip_name, working_dir);
+if ~isempty(zipPath)
+    dpabi_version = repa_extract_and_activate_dpabi(zipPath, working_dir, deps);
     return;
-catch
-    % fprintf('Could not unzip and add DPABI to path. Moving to next step.\n');
 end
 
-% Step 4: Try to download DPABI from official website
+% Step 3: Download pinned DPABI release into REPA/third_party
 try
-    dpabi_url = 'https://d.rnet.co/DPABI/DPABI_V8.2_240510.zip';
-    dpabi_zip = fullfile(pwd, 'DPABI.zip');
-    fprintf('\nStarting download from:\n%s\n', dpabi_url);
-    websave(dpabi_zip, dpabi_url);
+    extractDir = repa_third_party_root();
+    if ~isfolder(extractDir)
+        mkdir(extractDir);
+    end
+
+    dpabi_zip = fullfile(extractDir, deps.dpabi_zip_name);
+    fprintf('\nStarting download into third_party from:\n%s\n', deps.dpabi_zip_url);
+    websave(dpabi_zip, deps.dpabi_zip_url);
     fprintf('Download completed.\n\n');
-    fprintf('Starting extraction and installation of DPABI.\n');
-    unzip(dpabi_zip);
-    dpabi_dir = dir('DPABI*');
-    dpabi_dir = dpabi_dir([dpabi_dir.isdir]);
-    dpabi_dir = dpabi_dir(~endsWith({dpabi_dir.name}, '.zip'));
-    addpath(genpath(dpabi_dir(1).name));
-    dpabi_version = repa_DPABI_version();
-    fprintf('DPABI version: %s\n\n', dpabi_version);
+    dpabi_version = repa_extract_and_activate_dpabi(dpabi_zip, working_dir, deps);
     return;
 catch
-    % fprintf('Download from %s failed. Moving to next step.\n', dpabi_url);
 end
 
-% Step 5: Try to download DPABI from GitHub
-try
-    github_url = 'https://codeload.github.com/Chaogan-Yan/DPABI/zip/refs/heads/master';
-    dpabi_zip = fullfile(pwd, 'DPABI.zip');
-    fprintf('\nStarting download from:\n%s\n', github_url);
-    websave(dpabi_zip, github_url);
-    fprintf('Download completed.\n\n');
-    fprintf('Starting extraction and installation of DPABI.\n');
-    unzip(dpabi_zip);
-    dpabi_dir = dir('DPABI*');
-    dpabi_dir = dpabi_dir([dpabi_dir.isdir]);
-    dpabi_dir = dpabi_dir(~endsWith({dpabi_dir.name}, '.zip'));
-    addpath(genpath(dpabi_dir(1).name));
-    dpabi_version = repa_DPABI_version();
+% Step 4: MATLAB path, only if it already points to pinned DPABI
+[isPinned, dpabi_version] = repa_try_pinned_dpabi_from_path(deps);
+if isPinned
+    fprintf('Using pinned DPABI already on MATLAB path.\n');
     fprintf('DPABI version: %s\n\n', dpabi_version);
     return;
-catch
-    % fprintf('Download from GitHub failed.\n');
 end
 
-% Step 6: If all steps fail, display error message
-error('Failed to download and install DPABI. Please install manually.');
+repa_install_dependency_error('DPABI', deps.dpabi_folder, deps.dpabi_zip_url, working_dir);
+end
+
+function dpabi_version = repa_activate_pinned_dpabi(depPath, deps)
+repa_validate_pinned_dpabi_folder(depPath, deps);
+fprintf('Using local DPABI folder:\n%s\n', depPath);
+addpath(genpath(depPath), '-begin');
+dpabi_version = deps.dpabi_version_token;
+fprintf('DPABI version: %s\n\n', dpabi_version);
+end
+
+function dpabi_version = repa_extract_and_activate_dpabi(zipPath, working_dir, deps)
+extractDir = repa_third_party_root();
+if ~isfolder(extractDir)
+    mkdir(extractDir);
+end
+
+fprintf('Extracting DPABI archive:\n%s\n', zipPath);
+unzip(zipPath, extractDir);
+
+depPath = repa_resolve_dependency_path(deps.dpabi_folder, working_dir);
+if isempty(depPath)
+    error('DPABI archive extracted, but folder "%s" was not found under %s.', ...
+        deps.dpabi_folder, extractDir);
+end
+
+dpabi_version = repa_activate_pinned_dpabi(depPath, deps);
 end
