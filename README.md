@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icon.svg" alt="REPA logo" width="128">
+</p>
+
 # REPA
 
 [![License](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html)

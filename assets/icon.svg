@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="REPA">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 78c-2-18 8-34 24-38 12-3 24 4 28 16 4 12-2 26-14 32-10 5-24 3-32-4"/>
+    <path d="M52 44c6-8 18-10 28-4"/>
+    <path d="M48 58c8 2 16 2 24 0"/>
+    <path d="M46 70c10 4 20 4 30 0"/>
+    <path d="M88 52l14-8"/>
+    <path d="M88 64l16 0"/>
+    <path d="M88 76l14 8"/>
+    <circle cx="108" cy="44" r="4" fill="#bfdbfe" stroke="none"/>
+    <circle cx="108" cy="64" r="4" fill="#bfdbfe" stroke="none"/>
+    <circle cx="108" cy="84" r="4" fill="#bfdbfe" stroke="none"/>
+  </g>
+</svg>
