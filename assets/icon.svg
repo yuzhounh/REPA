@@ -1,21 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="REPA">
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">REPA icon</title>
+  <desc id="desc">A side-view brain connected to a three-stage resting-state fMRI preprocessing pipeline.</desc>
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2563eb"/>
-      <stop offset="100%" stop-color="#1d4ed8"/>
+    <linearGradient id="background" x1="14" y1="12" x2="114" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9FCFF"/>
+      <stop offset="0.52" stop-color="#E8F1FA"/>
+      <stop offset="1" stop-color="#CDDEF0"/>
     </linearGradient>
+    <linearGradient id="flow" x1="61" y1="82" x2="112" y2="82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C4B5FD"/>
+      <stop offset="0.55" stop-color="#67E8D2"/>
+      <stop offset="1" stop-color="#F4D06F"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(104 92) rotate(-135) scale(39)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6AA9E9" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#6AA9E9" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
-  <g fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M44 78c-2-18 8-34 24-38 12-3 24 4 28 16 4 12-2 26-14 32-10 5-24 3-32-4"/>
-    <path d="M52 44c6-8 18-10 28-4"/>
-    <path d="M48 58c8 2 16 2 24 0"/>
-    <path d="M46 70c10 4 20 4 30 0"/>
-    <path d="M88 52l14-8"/>
-    <path d="M88 64l16 0"/>
-    <path d="M88 76l14 8"/>
-    <circle cx="108" cy="44" r="4" fill="#bfdbfe" stroke="none"/>
-    <circle cx="108" cy="64" r="4" fill="#bfdbfe" stroke="none"/>
-    <circle cx="108" cy="84" r="4" fill="#bfdbfe" stroke="none"/>
+
+  <rect width="128" height="128" rx="28" fill="url(#background)"/>
+  <rect x="1" y="1" width="126" height="126" rx="27" fill="none" stroke="#17324D" stroke-opacity="0.10" stroke-width="2"/>
+  <circle cx="104" cy="92" r="39" fill="url(#glow)"/>
+
+  <g transform="translate(0 8)">
+    <!-- Mirrored outline traced from the supplied lateral-view brain image. -->
+    <path
+      d="M49.6 18.6 Q55.7 18 64.7 19.5 Q73.6 21 80.4 24.5 Q87.2 28 91.1 32.8 Q95 37.5 95.5 42.7 Q96 47.8 93.6 51.9 Q91.2 56 88.5 57.4 Q85.8 58.9 82.8 59.1 Q79.8 59.4 79.1 61.2 Q78.4 63 76.8 64 Q75.3 65 70.4 66 Q65.5 66.9 61.7 65.7 Q57.9 64.6 51.2 73.2 Q44.5 81.9 42.5 82.4 Q40.5 83 40.1 82 Q39.7 81 40.6 78.1 Q41.4 75.3 35 74.2 Q28.5 73.2 26.5 71.2 Q24.5 69.1 24.2 66.3 Q24 63.5 21.5 63.5 Q19 63.5 18.1 62.4 Q17.1 61.4 15.5 58.2 Q14 55 14.5 50 Q15 45 19.6 37.8 Q24.2 30.5 29.3 26.2 Q34.3 21.9 38.9 20.5 Q43.6 19.1 49.6 18.6Z"
+      fill="none"
+      stroke="#17324D"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      vector-effect="non-scaling-stroke"
+      transform="matrix(1.22 0 0 1.23 -11.1 -12.2)"
+    />
+
+    <!-- A single left-to-right path makes the preprocessing sequence explicit. -->
+    <path d="M58 92H111" fill="none" stroke="#0A1820" stroke-opacity="0.72" stroke-width="8" stroke-linecap="round"/>
+    <path d="M58 92H111" fill="none" stroke="url(#flow)" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="m108 87 5 5-5 5" fill="none" stroke="#F4D06F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g stroke="#10242D" stroke-width="2.2">
+      <circle cx="68" cy="92" r="7" fill="#C4B5FD"/>
+      <circle cx="88" cy="92" r="7" fill="#67E8D2"/>
+      <circle cx="108" cy="92" r="7" fill="#F4D06F"/>
+    </g>
+    <g fill="#10242D">
+      <circle cx="68" cy="92" r="2"/>
+      <path d="M85 88.8h6v2.2h-6zm1.3 4.2h3.4v2.2h-3.4z"/>
+      <path d="m104.8 92 2.2 2.2 4.2-4.5 1.5 1.5-5.7 6-3.7-3.7z"/>
+    </g>
   </g>
 </svg>
