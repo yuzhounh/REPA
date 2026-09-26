@@ -4,7 +4,7 @@
 
 # REPA
 
-[![License](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-D4A017.svg)](LICENSE)
 
 REPA (静息态功能磁共振成像预处理与分析工具) 是一个基于 SPM 和 DPABI 开发的用于处理静息态功能磁共振数据的工具箱。
 
@@ -268,6 +268,10 @@ GUI 支持：
    - 实时进度跟踪
    - 每个处理步骤的预计剩余时间
    - 整个流程执行过程中的清晰状态更新
+
+## 许可证
+
+REPA 采用 [GNU 通用公共许可证第 3 版](LICENSE)。SPM、DPABI、dcm2niix 以及其他捆绑或下载的第三方组件继续适用其各自的许可证与声明。
 
 ## 联系方式
 

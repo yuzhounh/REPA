@@ -7,7 +7,7 @@
 <p align="center"><strong>Resting-State fMRI Preprocessing and Analysis</strong></p>
 
 <p align="center">
-  <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html"><img src="https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg" alt="LGPL v2.1 license" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-D4A017.svg" alt="GPL-3.0 license" /></a>
 </p>
 
 REPA (Resting-state fMRI Preprocessing and Analysis) is a toolbox developed based on SPM and DPABI for processing resting-state fMRI data.
@@ -273,6 +273,10 @@ The GUI supports:
    - Estimated time remaining for each processing step
    - Clear status updates throughout pipeline execution
   
+## License
+
+REPA is distributed under the [GNU General Public License, version 3](LICENSE). SPM, DPABI, dcm2niix, and other bundled or downloaded third-party components retain their own licenses and notices.
+
 ## Contact
 
 Jing Wang (wangjing@xynu.edu.cn)
