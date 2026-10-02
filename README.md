@@ -1,13 +1,19 @@
 <p align="center">
-  <img src="assets/icon.svg" alt="REPA logo" width="128">
+  <img src="assets/icon.svg" width="112" alt="REPA logo">
 </p>
 
 <h1 align="center">REPA</h1>
 
-<p align="center"><strong>Resting-State fMRI Preprocessing and Analysis</strong></p>
+<p align="center"><strong>Resting-state fMRI preprocessing and analysis, built on SPM and DPABI.</strong></p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-D4A017.svg" alt="GPL-3.0 license" /></a>
+  <a href="https://github.com/yuzhounh/REPA/releases/latest"><img src="https://img.shields.io/github/v/release/yuzhounh/REPA?style=flat&amp;color=0969da&amp;label=Release" alt="Latest stable release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-f59e0b?style=flat" alt="License: GPL-3.0"></a>
+  <img src="https://img.shields.io/badge/MATLAB-Research-e16737?style=flat" alt="MATLAB: Research">
+</p>
+
+<p align="center">
+  <a href="README_CN.md">中文说明</a> · <a href="https://github.com/yuzhounh/REPA/releases/latest">Latest release</a> · <a href="#installation">Get started</a> · <a href="LICENSE">License</a>
 </p>
 
 REPA (Resting-state fMRI Preprocessing and Analysis) is a toolbox developed based on SPM and DPABI for processing resting-state fMRI data.
